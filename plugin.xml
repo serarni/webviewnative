@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    id="com.divisait.webviewnative"
+    version="1.0.0">
+    <name>webviewnative</name>
+    <description>open an url in a native web view component</description>
+    <license>MIT</license>
+
+    <js-module src="www/WebViewNative.js" name="WebViewNative">
+        <clobbers target="WebViewNative" />
+    </js-module>
+
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="WebViewNative">
+                <param name="ios-package" value="WebViewNative" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/WebViewNative.h" />
+        <source-file src="src/ios/WebViewNative.m" />
+    </platform>
+
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="WebViewNative" >
+                <param name="android-package" value="com.divisait.webviewnative.WebViewNative"/>
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+        <source-file src="src/android/WebViewNative.java" target-dir="src/com/divisait/webviewnative" />
+    </platform>
+
+</plugin>
