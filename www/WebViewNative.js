@@ -26,10 +26,22 @@
 
 var WebViewNative = module.exports;
 
-WebViewNative.showNativeWebView = function (sUrl, iLeft, iTop, iWidth, iHeight, success, error) {
-  cordova.exec(success, error, 'WebViewNative', 'showWebViewNative', [sUrl, iLeft, iTop, iWidth, iHeight]);
+WebViewNative.showWebViewNative = function (sUrl, iLeft, iTop, iWidth, iHeight, success, errorCallback) {
+    try {
+        cordova.exec(success, error, 'WebViewNative', 'showWebViewNative', [sUrl, iLeft, iTop, iWidth, iHeight]);
+    }
+    catch(error){
+        console.log("WebViewNative.showNativeWebView() error " + error);
+        errorCallback();
+    }
 };
 
-WebViewNative.hideNativeWebView = function (success, error) {
-  cordova.exec(success, error, 'WebViewNative', 'hideWebViewNative', [""]);
+WebViewNative.hideWebViewNative = function (success, error) {
+    try {
+        cordova.exec(success, error, 'WebViewNative', 'hideWebViewNative', [""]);
+    }
+    catch(error){
+        console.log("WebViewNative.showNativeWebView() error " + error);
+        errorCallback();
+    }
 };

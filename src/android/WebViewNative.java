@@ -20,13 +20,13 @@ public class WebViewNative extends CordovaPlugin{
 
 	private final static String TAG_LOG = "WebViewNative";
 	
-	private WebView m_webViewNative;
-	private LinearLayout m_lyParent;
+	private static WebView m_webViewNative;
+	private static LinearLayout m_lyParent;
 	
 	@Override
 	public boolean execute(String action, JSONArray args,
 			CallbackContext callbackContext) throws JSONException 
-	{
+	{ 
 		if(action.equals("showWebViewNative")){
 			String sUrl = args.getString(0);
 			int iLeft = args.getInt(1);
@@ -35,13 +35,13 @@ public class WebViewNative extends CordovaPlugin{
 			int iHeight = args.getInt(4);
 			
 			showWebViewNative(sUrl, iLeft, iTop, iWidth, iHeight);
-			
-	        return true;
 	    } else if (action.equals("hideWebViewNative")){
 	    	hideWebViewNative();
 	    }
-		
-		return false;
+	    else {	    	
+	    	return false;
+	    }
+		return true;
 	}
 	
 	@SuppressLint("SetJavaScriptEnabled")
@@ -60,17 +60,14 @@ public class WebViewNative extends CordovaPlugin{
 					m_webViewNative.loadUrl(sUrl);
 					m_webViewNative.setWebViewClient(new WebViewClient());
 					m_webViewNative.getSettings().setJavaScriptEnabled(true);
-					ViewGroup.MarginLayoutParams params = new ViewGroup.MarginLayoutParams(iWidth, iHeight);
-					params.setMargins(iLeft, iTop, 0, 0);
-					m_webViewNative.setLayoutParams(params);
-					
+					m_webViewNative.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
 					m_lyParent = new LinearLayout(context);
 					m_lyParent.setPadding(iLeft, iTop, 0, 0);
-					View view = new View(context);
-					view.setVisibility(View.INVISIBLE);
-					view.setLayoutParams(new ViewGroup.LayoutParams(1, iTop));
-					m_lyParent.setHorizontalGravity(LinearLayout.VERTICAL);
-					m_lyParent.addView(view);
+					//View view = new View(context);
+					//view.setVisibility(View.INVISIBLE);
+					//view.setLayoutParams(new ViewGroup.LayoutParams(1, iTop));
+					//m_lyParent.setHorizontalGravity(LinearLayout.VERTICAL);
+					//m_lyParent.addView(view);
 					m_lyParent.addView(m_webViewNative);
 					
 					actMain.getWindow().addContentView(m_lyParent, 
@@ -92,10 +89,13 @@ public class WebViewNative extends CordovaPlugin{
 			public void run() 
 			{	
 				try
-				{					
-					m_webViewNative.destroy();
-					m_lyParent.removeAllViews();
-					m_lyParent.setVisibility(View.GONE);
+				{			
+					if (null!=m_webViewNative)
+						m_webViewNative.destroy();
+					if (null != m_lyParent) {						
+						m_lyParent.removeAllViews();
+						m_lyParent.setVisibility(View.GONE);
+					}
 				}
 				catch(Exception e) {
 					Log.d(TAG_LOG, "hideWebViewNative() ERROR " + e.getMessage());
