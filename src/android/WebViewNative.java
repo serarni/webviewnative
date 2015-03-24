@@ -1,13 +1,20 @@
 package com.divisait.webviewnative;
 
+import java.util.List;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +34,7 @@ public class WebViewNative extends CordovaPlugin{
 	public boolean execute(String action, JSONArray args,
 			CallbackContext callbackContext) throws JSONException 
 	{ 
-		if(action.equals("showWebViewNative")){
+		if(action.equals("showWebViewNative")) {
 			String sUrl = args.getString(0);
 			int iLeft = args.getInt(1);
 			int iTop = args.getInt(2);
@@ -35,8 +42,18 @@ public class WebViewNative extends CordovaPlugin{
 			int iHeight = args.getInt(4);
 			
 			showWebViewNative(sUrl, iLeft, iTop, iWidth, iHeight);
-	    } else if (action.equals("hideWebViewNative")){
+	    } else if (action.equals("hideWebViewNative")) {
 	    	hideWebViewNative();
+	    } else if (action.equals("isViewerAppInstalled")) {
+	    	JSONObject successObj = new JSONObject();
+	    	String sDataType = args.getString(0);
+	    	if (this.isViewerAppInstalled(sDataType)) {
+	    		successObj.put("status", PluginResult.Status.OK.ordinal());
+				successObj.put("message", "Installed");
+	    	} else {
+	    		successObj.put("status", PluginResult.Status.NO_RESULT.ordinal());
+				successObj.put("message", "Not installed");
+	    	}
 	    }
 	    else {	    	
 	    	return false;
@@ -103,5 +120,16 @@ public class WebViewNative extends CordovaPlugin{
 			}
 		});
 	}
-
+	
+	private boolean isViewerAppInstalled(String sDataType)
+	{
+		boolean result = false;
+		
+		PackageManager packageManager = this.cordova.getActivity().getPackageManager();
+		Intent testIntent = new Intent(Intent.ACTION_VIEW);
+		testIntent.setType(sDataType);
+		List<ResolveInfo> list = packageManager.queryIntentActivities(testIntent, PackageManager.MATCH_DEFAULT_ONLY);
+		result = list.size() > 0;
+		return result;
+	}
 }

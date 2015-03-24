@@ -45,3 +45,13 @@ WebViewNative.hideWebViewNative = function (success, error) {
         errorCallback();
     }
 };
+
+WebViewNative.isViewerAppInstalled = function (sDataType, onResultCallback) {
+    cordova.exec(
+             onResultCallback,      // A callback function that deals with the JSON object from the CDVPluginResult instance
+             onResultCallback,      // An error handler
+             'WebViewNative',       // What class to target messages to (method calls = message in ObjC)
+             'isViewerAppInstalled',// Which method to call
+             [ sDataType]   // These go in the CDVInvokedUrlCommand instance's.arguments property
+         );
+}
