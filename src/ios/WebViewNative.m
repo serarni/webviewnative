@@ -52,6 +52,7 @@
     
     if (nil != self.uiWebView) {
         [self changeViewVisivilityWithAnimation:self.uiWebView visible:NO completition:^(BOOL finished) {
+            [self.uiWebView stopLoading];
             [self.uiWebView removeFromSuperview];
             self.uiWebView = nil;
         }];
@@ -73,8 +74,7 @@
 {
     NSLog(@"changeWebViewVisivility()");
     
-    if (view && view.hidden == bVisible)
-    {
+    if (view && view.hidden == bVisible) {
         [UIView transitionWithView:view
                           duration:0.4
                            options:UIViewAnimationOptionTransitionCrossDissolve
@@ -83,11 +83,15 @@
         
         [view setHidden:!bVisible];
     }
+    else {
+        completion(YES);
+    }
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView
 {
     NSLog(@"webViewDidFinishLoad()");
+
     [self changeViewVisivilityWithAnimation:webView visible:YES completition:NULL];
 }
 
