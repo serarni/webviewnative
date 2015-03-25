@@ -26,23 +26,31 @@
 
 var WebViewNative = module.exports;
 
-WebViewNative.showWebViewNative = function (sUrl, iLeft, iTop, iWidth, iHeight, success, errorCallback) {
+WebViewNative.createWebViewNative = function (sUrl, iLeft, iTop, iWidth, iHeight, success, errorCallback) {
     try {
-        cordova.exec(success, error, 'WebViewNative', 'showWebViewNative', [sUrl, iLeft, iTop, iWidth, iHeight]);
+        cordova.exec(success, error, 'WebViewNative', 'createWebViewNative', [sUrl, iLeft, iTop, iWidth, iHeight]);
     }
     catch(error){
-        console.log("WebViewNative.showNativeWebView() error " + error);
+        console.log("WebViewNative.createWebViewNative() error " + error);
         errorCallback();
     }
 };
 
-WebViewNative.hideWebViewNative = function (success, error) {
+WebViewNative.destroyWebViewNative = function (success, error) {
     try {
-        cordova.exec(success, error, 'WebViewNative', 'hideWebViewNative', [""]);
+        cordova.exec(success, error, 'WebViewNative', 'destroyWebViewNative', [""]);
     }
     catch(error){
-        console.log("WebViewNative.showNativeWebView() error " + error);
-        errorCallback();
+        console.log("WebViewNative.destroyWebViewNative() error " + error);
+    }
+};
+
+WebViewNative.changeWebViewVisivility = function (bVisible, success, error) {
+    try {
+        cordova.exec(success, error, 'WebViewNative', 'changeWebViewVisivility', [bVisible]);
+    }
+    catch(error){
+        console.log("WebViewNative.changeWebViewVisivility() error " + error);
     }
 };
 

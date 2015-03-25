@@ -34,17 +34,21 @@ public class WebViewNative extends CordovaPlugin{
 	public boolean execute(String action, JSONArray args,
 			CallbackContext callbackContext) throws JSONException 
 	{ 
-		if(action.equals("showWebViewNative")) {
+		if(action.equals("createWebViewNative")) {
 			String sUrl = args.getString(0);
 			int iLeft = args.getInt(1);
 			int iTop = args.getInt(2);
 			int iWidth = args.getInt(3);
 			int iHeight = args.getInt(4);
 			
-			showWebViewNative(sUrl, iLeft, iTop, iWidth, iHeight);
-	    } else if (action.equals("hideWebViewNative")) {
-	    	hideWebViewNative();
-	    } else if (action.equals("isViewerAppInstalled")) {
+			createWebViewNative(sUrl, iLeft, iTop, iWidth, iHeight);
+	    } else if (action.equals("destroyWebViewNative")) {
+	    	destroyWebViewNative();
+	    }
+	    else if(action.equals("changeWebViewVisivility")) {
+	    	changeWebViewVisivility(args.getBoolean(0));
+	    }
+	    else if (action.equals("isViewerAppInstalled")) {
 	    	JSONObject successObj = new JSONObject();
 	    	String sDataType = args.getString(0);
 	    	if (this.isViewerAppInstalled(sDataType)) {
@@ -54,6 +58,7 @@ public class WebViewNative extends CordovaPlugin{
 	    		successObj.put("status", PluginResult.Status.NO_RESULT.ordinal());
 				successObj.put("message", "Not installed");
 	    	}
+	    	callbackContext.success(successObj);
 	    }
 	    else {	    	
 	    	return false;
@@ -61,30 +66,45 @@ public class WebViewNative extends CordovaPlugin{
 		return true;
 	}
 	
-	@SuppressLint("SetJavaScriptEnabled")
-	private void showWebViewNative(final String sUrl, final int iLeft, final int iTop, final int iWidth, final int iHeight)
-	{
+	private void changeWebViewVisivility(final boolean bVisible) {
 		final Activity actMain = this.cordova.getActivity();
-		final Context context = this.webView.getContext();
-		
 		actMain.runOnUiThread(new Runnable() {
 			@Override
 			public void run() 
 			{	
 				try
-				{					
+				{			
+					if (null!=m_webViewNative)
+						m_webViewNative.setVisibility(bVisible?View.VISIBLE:View.INVISIBLE);
+				}
+				catch(Exception e) {
+					Log.d(TAG_LOG, "changeWebViewNativeVisivility() ERROR " + e.getMessage());
+				}
+			}
+		});
+	}
+
+	@SuppressLint("SetJavaScriptEnabled")
+	private void createWebViewNative(final String sUrl, final int iLeft, final int iTop, final int iWidth, final int iHeight)
+	{
+		final Activity actMain = this.cordova.getActivity();
+		final Context context = this.webView.getContext();
+		
+		actMain.runOnUiThread(new Runnable() {
+			@SuppressWarnings("deprecation")
+			@Override
+			public void run() 
+			{	
+				try
+				{
 					m_webViewNative = new WebView(context);
 					m_webViewNative.loadUrl(sUrl);
 					m_webViewNative.setWebViewClient(new WebViewClient());
 					m_webViewNative.getSettings().setJavaScriptEnabled(true);
-					m_webViewNative.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT));
+					m_webViewNative.setLayoutParams(
+							new ViewGroup.LayoutParams(iWidth, iHeight));
 					m_lyParent = new LinearLayout(context);
 					m_lyParent.setPadding(iLeft, iTop, 0, 0);
-					//View view = new View(context);
-					//view.setVisibility(View.INVISIBLE);
-					//view.setLayoutParams(new ViewGroup.LayoutParams(1, iTop));
-					//m_lyParent.setHorizontalGravity(LinearLayout.VERTICAL);
-					//m_lyParent.addView(view);
 					m_lyParent.addView(m_webViewNative);
 					
 					actMain.getWindow().addContentView(m_lyParent, 
@@ -98,7 +118,7 @@ public class WebViewNative extends CordovaPlugin{
 		
 	}
 
-	private void hideWebViewNative() 
+	private void destroyWebViewNative() 
 	{
 		final Activity actMain = this.cordova.getActivity();
 		actMain.runOnUiThread(new Runnable() {
