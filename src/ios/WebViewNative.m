@@ -2,7 +2,7 @@
 //  WebViewNative.m
 //  idcsalud
 //
-//  Created by administrador on 18/03/15.
+//  Created by sarnillas on 18/03/15.
 //
 //
 
@@ -84,7 +84,8 @@
         [view setHidden:!bVisible];
     }
     else {
-        completion(YES);
+        if (completion)
+            completion(YES);
     }
 }
 
@@ -93,6 +94,7 @@
     NSLog(@"webViewDidFinishLoad()");
 
     [self changeViewVisivilityWithAnimation:webView visible:YES completition:NULL];
+
 }
 
 

@@ -55,11 +55,10 @@ WebViewNative.changeWebViewVisivility = function (bVisible, success, error) {
 };
 
 WebViewNative.isViewerAppInstalled = function (sDataType, onResultCallback) {
-    cordova.exec(
-             onResultCallback,      // A callback function that deals with the JSON object from the CDVPluginResult instance
-             onResultCallback,      // An error handler
-             'WebViewNative',       // What class to target messages to (method calls = message in ObjC)
-             'isViewerAppInstalled',// Which method to call
-             [ sDataType]   // These go in the CDVInvokedUrlCommand instance's.arguments property
-         );
+    try {
+        cordova.exec(onResultCallback, onResultCallback, 'WebViewNative', 'isViewerAppInstalled', [ sDataType]);
+    }
+    catch(error){
+        console.log("WebViewNative.isViewerAppInstalled() error " + error);
+    }
 }
